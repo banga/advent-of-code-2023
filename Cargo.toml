@@ -13,3 +13,9 @@ regex = "1.10.2"
 
 [[bin]]
 name = "day1"
+
+[[bin]]
+name = "day2"
+
+[[bin]]
+name = "day3"

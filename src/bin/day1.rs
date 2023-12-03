@@ -4,7 +4,7 @@ use aoc2023::lib;
 use regex::Regex;
 
 pub fn part1() {
-    let lines: Vec<String> = lib::read_inputs();
+    let lines: Vec<String> = lib::read_lines_as();
     let mut sum = 0;
     for line in lines {
         let mut first_char: Option<char> = None;
@@ -60,7 +60,7 @@ pub fn part2() {
         ("enin", '9'),
     ]);
 
-    let lines: Vec<String> = lib::read_inputs();
+    let lines: Vec<String> = lib::read_lines_as();
     let mut sum = 0;
     for line in lines {
         println!("{}", line);
