@@ -2,29 +2,19 @@ use aoc2023::lib;
 use num::Integer;
 
 fn get_next_in_series(series: &Vec<i64>) -> i64 {
-    let mut deltas: Vec<Vec<i64>> = [series.clone()].into();
-    while deltas.last().unwrap().iter().any(|&d| d != 0) {
-        let current = deltas.last().unwrap();
-        let next: Vec<i64> = current
-            .iter()
-            .zip(current.iter().skip(1))
-            .map(|(x, y)| y - x)
-            .collect();
-        deltas.push(next);
-    }
+    let mut deltas: Vec<i64> = series.clone();
+    let mut length = deltas.len();
 
-    println!("{:?}", deltas);
-
-    deltas.last_mut().unwrap().push(0);
-    for i in (0..deltas.len()-2).rev() {
-        let prev = *deltas[i].last().unwrap();
-        let delta = *deltas[i + 1].last().unwrap();
-        deltas[i].push(prev + delta);
+    while deltas[0..length-1].iter().any(|&d| d != 0) {
+        for i in 0..=length - 2 {
+            deltas[i] = deltas[i + 1] - deltas[i];
+        }
+        length -= 1;
     }
 
     println!("{:?}", deltas);
     
-    *deltas[0].last().unwrap()
+    deltas.iter().sum()
 }
 
 fn part1() {
