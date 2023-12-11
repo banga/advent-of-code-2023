@@ -29,4 +29,14 @@ pub mod lib {
     pub fn read_byte_lines() -> Vec<Vec<u8>> {
         read_lines().iter().map(|s| s.as_bytes().into()).collect()
     }
+
+    pub fn print_line(line: &Vec<u8>) {
+        println!("{}", String::from_utf8(line.to_vec()).unwrap());
+    }
+
+    pub fn print_lines(lines: &Vec<Vec<u8>>) {
+        for line in lines {
+            print_line(line);
+        }
+    }
 }
