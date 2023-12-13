@@ -30,8 +30,12 @@ pub mod lib {
         read_lines().iter().map(|s| s.as_bytes().into()).collect()
     }
 
-    pub fn print_line(line: &Vec<u8>) {
-        println!("{}", String::from_utf8(line.to_vec()).unwrap());
+    pub fn ascii_to_string(s: &[u8]) -> String {
+        String::from_utf8(s.to_vec()).unwrap()
+    }
+
+    pub fn print_line(line: &[u8]) {
+        println!("{}", ascii_to_string(line));
     }
 
     pub fn print_lines(lines: &Vec<Vec<u8>>) {
