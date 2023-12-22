@@ -1,23 +1,33 @@
-use std::collections::HashMap;
+#![allow(dead_code, unused_imports)]
+use std::collections::{HashMap, HashSet};
 
-use aoc2023::lib::{self, ascii_to_string};
+use aoc2023::lib::{self};
 
-fn dfs(grid: &mut Vec<Vec<u8>>, i: isize, j: isize, budget: i64) {
+fn dfs(
+    grid: &Vec<Vec<u8>>,
+    i: isize,
+    j: isize,
+    budget: isize,
+    visited: &mut HashSet<(isize, isize, isize)>,
+) {
     if i < 0 || i >= grid.len() as isize || j < 0 || j >= grid.len() as isize {
         return;
     }
-    let ch = &mut grid[i as usize][j as usize];
-    if *ch == b'#' {
+    let key = (i, j, budget);
+    if !visited.insert(key) {
+        return;
+    }
+    let ch = grid[i as usize][j as usize];
+    if ch == b'#' {
         return;
     }
     if budget == 0 {
-        *ch = b'O';
         return;
     }
-    dfs(grid, i - 1, j, budget - 1);
-    dfs(grid, i + 1, j, budget - 1);
-    dfs(grid, i, j - 1, budget - 1);
-    dfs(grid, i, j + 1, budget - 1);
+    dfs(grid, i - 1, j, budget - 1, visited);
+    dfs(grid, i + 1, j, budget - 1, visited);
+    dfs(grid, i, j - 1, budget - 1, visited);
+    dfs(grid, i, j + 1, budget - 1, visited);
 }
 
 // Check if (si, sj) can be reached from (i, j) with a path of length exactly `length`
@@ -72,30 +82,17 @@ fn part1() {
         si += 1;
     }
     println!("si = {}, sj = {}", si, sj);
-    // lib::print_lines(&grid);
 
-    let budget = 64;
-    let mut count = 0;
-    for i in 0..grid.len() {
-        for j in 0..grid[0].len() {
-            if dp(
-                &grid,
-                si as isize,
-                sj as isize,
-                i as isize,
-                j as isize,
-                budget,
-                &mut HashMap::new(),
-            ) {
-                count += 1;
-                print!("O");
-            } else {
-                print!("{}", ascii_to_string(&grid[i][j..j + 1]));
-            }
-        }
-        println!();
-    }
-    println!("{}", count);
+    let mut visited = HashSet::new();
+    dfs(&grid, si as isize, sj as isize, 6, &mut visited);
+    lib::print_lines(&grid);
+    println!(
+        "{}",
+        visited
+            .iter()
+            .filter(|(i, j, dist)| *dist == 0 && grid[*i as usize][*j as usize] != b'#')
+            .count()
+    );
 }
 
 #[allow(dead_code)]
