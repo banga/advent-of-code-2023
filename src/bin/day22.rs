@@ -66,8 +66,7 @@ impl Brick {
     }
 }
 
-#[allow(dead_code)]
-fn part1() {
+fn read_bricks() -> Vec<Brick> {
     let grid = lib::read_lines();
 
     let mut bricks: Vec<Brick> = vec![];
@@ -94,11 +93,15 @@ fn part1() {
     // Lowest first
     bricks.sort_by_key(|brick| brick.start.z);
 
+    bricks
+}
+
+fn drop_bricks(bricks: Vec<Brick>) -> Vec<Brick> {
     // Make the bricks fall
-    let mut moved_bricks: Vec<Brick> = vec![];
+    let mut dropped_bricks: Vec<Brick> = vec![];
     for (i, brick) in bricks.iter().enumerate() {
         let shadowed_brick_z = (0..i)
-            .map(|j| &moved_bricks[j])
+            .map(|j| &dropped_bricks[j])
             .filter(|b| brick.shadows(b))
             .map(|b| b.end.z)
             .max()
@@ -117,31 +120,40 @@ fn part1() {
             ..bricks[i]
         };
         // println!("{} moved to {}", brick, moved_brick);
-        moved_bricks.push(moved_brick);
+        dropped_bricks.push(moved_brick);
     }
-
     // println!();
+    dropped_bricks
+}
 
+fn get_supported_by_matrix(bricks: Vec<Brick>) -> Vec<Vec<bool>> {
     let mut supported_by: Vec<Vec<bool>> = vec![vec![false; bricks.len()]; bricks.len()];
     // supports[i][j] = true if i is supported by j
-    for i in 0..moved_bricks.len() {
+    for i in 0..bricks.len() {
         for j in 0..i {
-            supported_by[i][j] = moved_bricks[i].supported_by(&moved_bricks[j]);
+            supported_by[i][j] = bricks[i].supported_by(&bricks[j]);
         }
     }
 
-    // print!(" ");
-    // for i in 0..supported_by[0].len() {
-    //     print!(" {}", i + 1);
-    // }
-    // println!();
-    // for (i, s) in supported_by.iter().enumerate() {
-    //     print!("{} ", i + 1);
-    //     for t in s {
-    //         print!("{} ", if *t { 'x' } else { '.' });
-    //     }
-    //     println!();
-    // }
+    print!(" ");
+    for i in 0..supported_by[0].len() {
+        print!(" {}", i + 1);
+    }
+    println!();
+    for (i, s) in supported_by.iter().enumerate() {
+        print!("{} ", i + 1);
+        for t in s {
+            print!("{} ", if *t { 'x' } else { '.' });
+        }
+        println!();
+    }
+
+    supported_by
+}
+
+#[allow(dead_code)]
+fn part1() {
+    let supported_by = get_supported_by_matrix(drop_bricks(read_bricks()));
 
     let support_counts: Vec<usize> = supported_by
         .iter()
@@ -172,9 +184,45 @@ fn part1() {
 }
 
 #[allow(dead_code)]
-fn part2() {}
+fn part2() {
+    let supported_by = get_supported_by_matrix(drop_bricks(read_bricks()));
+
+    let support_counts: Vec<usize> = supported_by
+        .iter()
+        .map(|row| row.iter().filter(|x| **x).count())
+        .collect();
+    // for (i, count) in support_counts.iter().enumerate() {
+    //     println!("{} {}", i, count);
+    // }
+
+    let mut num_fallen = 0;
+    for j in 0..supported_by[0].len() {
+        let mut support_counts = support_counts.clone();
+        let mut fallen = HashSet::<usize>::new();
+        let mut q = vec![];
+        q.push(j);
+        println!("{}", j + 1);
+        while let Some(k) = q.pop() {
+            for i in 0..supported_by.len() {
+                if supported_by[i][k] {
+                    support_counts[i] -= 1;
+                    if support_counts[i] == 0 {
+                        if !fallen.insert(i) {
+                            continue;
+                        }
+                        println!(" {} {}", i + 1, k + 1);
+                        q.push(i);
+                    }
+                }
+            }
+        }
+        num_fallen += fallen.len();
+    }
+
+    println!("{}", num_fallen);
+}
 
 pub fn main() {
-    part1();
+    // part1();
     part2();
 }
