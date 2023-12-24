@@ -15,14 +15,14 @@ fn dfs(grid: &mut Vec<Vec<u8>>, (i, j): (isize, isize), end: (isize, isize)) -> 
     }
 
     if (i, j) == end {
-        print_lines(&grid);
-        println!();
+        // print_lines(&grid);
+        // println!();
         return Some(0);
     }
 
     let max_distance = match grid[i as usize][j as usize] {
         b'#' | b'O' => None,
-        b'.' => {
+        b'.' | b'^' | b'>' | b'v' | b'<' => {
             grid[i as usize][j as usize] = b'O';
             let neighbors = [(i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)];
             let result = neighbors
@@ -32,10 +32,10 @@ fn dfs(grid: &mut Vec<Vec<u8>>, (i, j): (isize, isize), end: (isize, isize)) -> 
             grid[i as usize][j as usize] = b'.';
             result
         }
-        b'^' => dfs(grid, (i - 1, j), end),
-        b'>' => dfs(grid, (i, j + 1), end),
-        b'v' => dfs(grid, (i + 1, j), end),
-        b'<' => dfs(grid, (i, j - 1), end),
+        // b'^' => dfs(grid, (i - 1, j), end),
+        // b'>' => dfs(grid, (i, j + 1), end),
+        // b'v' => dfs(grid, (i + 1, j), end),
+        // b'<' => dfs(grid, (i, j - 1), end),
         c => unreachable!("'{}'", c as char),
     };
 
