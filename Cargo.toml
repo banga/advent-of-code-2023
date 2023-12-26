@@ -8,6 +8,7 @@ edition = "2018"
 
 [dependencies]
 num = "0.4.1"
+rand = "0.8.5"
 regex = "1.10.2"
 
 [lib]
